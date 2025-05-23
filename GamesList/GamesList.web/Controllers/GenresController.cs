@@ -6,40 +6,72 @@ namespace GamesList.web.Controllers
 {
     public class GenreController : Controller
     {
-        static GenresService genreService = new GenresService();
+        private readonly GenresService _genreService;
 
-
-        [HttpGet("")]
+        public GenreController(GenresService genreService)
+        {
+            _genreService = genreService;
+        }
+        
+        [HttpGet("")]        
         public IActionResult Index()
         {
-            var model = genreService.GetAllGenres();
+            var model = _genreService.GetAllGenres();
             return View(model);
         }
 
-        [HttpGet("/create")]
+        [HttpGet("create")]
         public IActionResult Create()
         {
             return View();
         }
 
-        [HttpPost("/create")]
+        [HttpPost("create")]
         public IActionResult Create(Genre genre)
         {
             if (ModelState.IsValid)
             {    
-                genreService.AddGenre(genre);
+                _genreService.AddGenre(genre);
                 return RedirectToAction("Index");
             }            
+            return View();
+        }
+        
+        [HttpGet("edit/{id}")]
+        public IActionResult Edit(int id)
+        {
+            var genre = _genreService.GetGenreById(id);
+            if (genre == null) return NotFound();
             return View(genre);
         }
 
-        //[HttpPost]
-        //public IActionResult RemoveGenre(int id)
-        //{
-            //genreService.RemoveGenre(id);
-            //return RedirectToAction("Index");
-        //}
+        [HttpPost("edit/{id}")]
+        public IActionResult Edit(Genre genre)
+        {
+            if (ModelState.IsValid)
+            {
+                _genreService.UpdateGenre(genre);
+                return RedirectToAction("Index");
+            }
+            return View(genre);
+        }
 
+        [HttpPost("delete/{id}")]
+        public IActionResult Delete(int id)
+        {
+            _genreService.RemoveGenreById(id);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet("details/{id}")]
+        public IActionResult Details(int id)
+        {
+            var genre = _genreService.GetGenreById(id);
+            if (genre == null)
+                return NotFound();
+
+            return View(genre);
+        }
 
     }
 }

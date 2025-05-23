@@ -10,17 +10,19 @@ namespace GamesList.web
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
             builder.Services.AddControllersWithViews();
             builder.Services.AddSingleton<GenresService>();
 
             var app = builder.Build();
 
             app.UseStaticFiles();
-            app.UseRouting();
+            app.MapControllers();
+            //app.UseRouting();
 
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Genre}/{action=Index}/{id?}");
+            //app.MapControllerRoute(
+            //    name: "default",
+            //    pattern: "{controller=Genre}/{action=Index}/{id?}");
 
             app.Run();
         }
